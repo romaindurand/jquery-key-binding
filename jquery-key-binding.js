@@ -23,11 +23,21 @@
       this.styleContainer()
       this.createInput()
       this.createLabel()
+      this.bindEvent()
+      this.setKey(this.settings.key)
 
-      this.setBinding(this.settings.key)
       $(this.element).click(function (event) {
         this.$label.hide()
         this.$input.val('').show().focus()
+      }.bind(this))
+    },
+
+    bindEvent: function () {
+      $(document).keydown(function (event) {
+        if (event.target.nodeName === 'INPUT') return
+        if (event.key === this.settings.key) {
+          $(this.element).trigger('keyBinding', {name: this.settings.name})
+        }
       }.bind(this))
     },
 
@@ -39,12 +49,14 @@
           width: '40px',
           fontSize: '30px',
           textAlign: 'center',
-          display: 'none'
+          display: 'none',
+          position: 'relative',
+          top: '2px'
         })
       $(this.element).append(this.$input)
       this.$input.keydown(function (event) {
         event.preventDefault()
-        this.setBinding(event.key)
+        this.setKey(event.key)
         this.$input.val('').hide()
         this.$label.show()
       }.bind(this))
@@ -58,8 +70,8 @@
     createLabel: function () {
       this.$label = $('<span></span>')
         .css({
-          fontSize: '40px',
-          textTransform: 'uppercase'
+          position: 'relative',
+          fontFamily: 'monospace'
         })
       $(this.element).append(this.$label)
     },
@@ -70,14 +82,43 @@
         height: '40px',
         border: '1px solid black',
         textAlign: 'center',
-        borderRadius: '3px'
+        borderRadius: '3px',
+        display: 'block',
+        margin: '5px',
+        float: 'left'
       })
     },
 
-    setBinding: function (key) {
+    setKey: function (key) {
       this.settings.key = key
-      this.settings.bindings[this.settings.name] = key
-      $(this.element).find('span').text(key)// key => this.getLabelText(key)
+      $(this.element).find('span').text(this.getLabelText(key))
+    },
+
+    getLabelText: function (key) {
+      key = {
+        'Escape': 'Esc',
+        'Control': 'Ctrl',
+        'AltGraph': 'AltGr',
+        'Delete': 'Del',
+        'Backspace': 'Back',
+        'Enter': '⮐',
+        'ArrowLeft': '←',
+        'ArrowUp': '↑',
+        'ArrowRight': '→',
+        'ArrowDown': '↓',
+        'MediaPlayPause': '⏵⏸',
+        'MediaStop': '⏹',
+        'CapsLock': '⮸',
+        'Insert': 'Ins',
+        ' ': 'Space'
+      }[key] || key
+      var fontSize = Math.max(Math.floor(key.length * -7.6 + 47.6), 6)
+      var top = Math.min(Math.floor(key.length * 4.6 - 8.6), 17)
+      this.$label.css({
+        fontSize: fontSize,
+        top: top
+      })
+      return key.length > 1 ? key : key.toUpperCase()
     }
   })
 
