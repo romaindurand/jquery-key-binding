@@ -20,6 +20,8 @@
 
   $.extend(Plugin.prototype, {
     init: function () {
+      this.settings.size = this.settings.size || 40
+
       this.styleContainer()
       this.createInput()
       this.createLabel()
@@ -46,8 +48,8 @@
         .css({
           outline: 'none',
           border: 'none',
-          width: '40px',
-          fontSize: '33px',
+          width: this.settings.size,
+          fontSize: this.getFontSize('1'),
           borderRadius: '3px',
           textAlign: 'center',
           display: 'none',
@@ -80,20 +82,36 @@
 
     styleContainer: function () {
       $(this.element).css({
-        width: '40px',
-        height: '40px',
+        width: this.settings.size,
+        height: this.settings.size,
         border: '1px solid black',
         textAlign: 'center',
         borderRadius: '3px',
-        display: 'table',
-        margin: '5px',
-        float: 'left'
+        display: 'table'
       })
     },
 
     setKey: function (key) {
       this.settings.key = key
-      $(this.element).find('span').text(this.getLabelText(key))
+      var labelText = this.getLabelText(key)
+      var fontSize = this.getFontSize(labelText)
+      this.$label.css({fontSize: fontSize}).text(labelText)
+      $(this.element).data('keyBinding', {
+        key: this.settings.key,
+        name: this.settings.name
+      })
+    },
+
+    getFontSize: function (text) {
+      var $clone = $('<span style="font-size: 5; font-family: monospace; visibility: hidden">' + text + '</span>')
+      $('body').append($clone)
+      var size
+      while ($clone.width() < this.settings.size && $clone.height() < this.settings.size) {
+        size = parseInt($clone.css('font-size'), 10)
+        $clone.css('font-size', size + 1)
+      }
+      $clone.remove()
+      return size
     },
 
     getLabelText: function (key) {
@@ -103,19 +121,14 @@
         'AltGraph': 'AltGr',
         'Delete': 'Del',
         'Backspace': 'Back',
-        'Enter': '⮐',
+        'Enter': '⏎',
         'ArrowLeft': '←',
         'ArrowUp': '↑',
         'ArrowRight': '→',
         'ArrowDown': '↓',
-        'MediaPlayPause': '⏵⏸',
-        'MediaStop': '⏹',
-        'CapsLock': '⮸',
         'Insert': 'Ins',
         ' ': 'Space'
       }[key] || key
-      var fontSize = Math.max(Math.floor(key.length * -5.4 + 40), 5)
-      this.$label.css({fontSize: fontSize})
       return key.length > 1 ? key : key.toUpperCase()
     }
   })
@@ -125,8 +138,7 @@
   $.fn[pluginName] = function (options) {
     return this.each(function () {
       if (!$.data(this, 'plugin_' + pluginName)) {
-        $.data(this, 'plugin_' +
-          pluginName, new Plugin(this, options))
+        $.data(this, 'plugin_' + pluginName, new Plugin(this, options))
       }
     })
   }

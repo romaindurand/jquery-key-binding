@@ -10,10 +10,10 @@
     <script src="jquery-key-binding.js"></script>
   </head>
   <body>
-    <div style="float: left;height: 40px;"><span style="position: relative;top: 42%;">Alert : </span></div>
+    <div style="float: left; margin-right:5px">Alert : </div>
     <div id="alertBinding"></div>
     <script>
-      $('#alertBinding').keyBinding({name: 'openAlert', key: 'a'})
+      $('#alertBinding').keyBinding({name: 'openAlert', key: 'a', size: 100})
 
       $(document).on('keyBinding', (event, binding) => {
         if (binding.name === 'openAlert') alert('Hello World!')
