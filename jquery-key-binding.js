@@ -47,11 +47,11 @@
           outline: 'none',
           border: 'none',
           width: '40px',
-          fontSize: '30px',
+          fontSize: '33px',
+          borderRadius: '3px',
           textAlign: 'center',
           display: 'none',
-          position: 'relative',
-          top: '2px'
+          position: 'relative'
         })
       $(this.element).append(this.$input)
       this.$input.keydown(function (event) {
@@ -71,7 +71,9 @@
       this.$label = $('<span></span>')
         .css({
           position: 'relative',
-          fontFamily: 'monospace'
+          fontFamily: 'monospace',
+          display: 'table-cell',
+          verticalAlign: 'middle'
         })
       $(this.element).append(this.$label)
     },
@@ -83,7 +85,7 @@
         border: '1px solid black',
         textAlign: 'center',
         borderRadius: '3px',
-        display: 'block',
+        display: 'table',
         margin: '5px',
         float: 'left'
       })
@@ -112,12 +114,8 @@
         'Insert': 'Ins',
         ' ': 'Space'
       }[key] || key
-      var fontSize = Math.max(Math.floor(key.length * -7.6 + 47.6), 6)
-      var top = Math.min(Math.floor(key.length * 4.6 - 8.6), 17)
-      this.$label.css({
-        fontSize: fontSize,
-        top: top
-      })
+      var fontSize = Math.max(Math.floor(key.length * -5.4 + 40), 5)
+      this.$label.css({fontSize: fontSize})
       return key.length > 1 ? key : key.toUpperCase()
     }
   })
